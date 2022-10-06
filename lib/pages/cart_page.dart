@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/components/card_item.dart';
 import 'package:shop/models/order_list.dart';
-import 'package:shop/models/product_list.dart';
 
 import '../models/cart.dart';
 
@@ -20,7 +19,7 @@ class CartPage extends StatelessWidget {
       body: Column(
         children: [
           Card(
-            margin: EdgeInsets.symmetric(
+            margin: const EdgeInsets.symmetric(
               horizontal: 15,
               vertical: 25,
             ),
@@ -31,14 +30,14 @@ class CartPage extends StatelessWidget {
                 children: [
                   const Text(
                     'Total',
-                    style: const TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 20),
                   ),
                   const SizedBox(width: 10),
                   Chip(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     label: Text(
-                      'R\$${cart.totalAmount}',
-                      style: TextStyle(
+                      'R\$${cart.totalAmount.toStringAsFixed(2)}',
+                      style: const TextStyle(
                         color: Colors.white,
                       ),
                     ),
