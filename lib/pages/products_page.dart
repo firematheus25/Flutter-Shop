@@ -27,8 +27,9 @@ class ProductsPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: ListView.builder(
-            itemCount: products.itemsCount,
-            itemBuilder: (ctx, i) => ProductItem(product: products.items[i])),
+          itemCount: products.itemsCount,
+          itemBuilder: (ctx, i) => ProductItem(product: products.items[i]),
+        ),
       ),
     );
   }
