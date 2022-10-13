@@ -50,7 +50,7 @@ class ProductItem extends StatelessWidget {
                           child: Text('Sim'),
                           onPressed: () {
                             Provider.of<ProductList>(context, listen: false)
-                                .removeItem(product.id);
+                                .removeProduct(product);
                             Navigator.of(context).pop(true);
                           },
                         ),

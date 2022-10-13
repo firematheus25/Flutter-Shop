@@ -7,8 +7,8 @@ import 'package:shop/models/product.dart';
 
 class ProductList with ChangeNotifier {
   final List<Product> _items = [];
-  final _url =
-      'https://shop-cod3r-38f0d-default-rtdb.firebaseio.com/products.json';
+  final _baseUrl =
+      'https://shop-cod3r-38f0d-default-rtdb.firebaseio.com/products';
 
   List<Product> get items => [..._items];
   List<Product> get favoriteItems =>
@@ -20,7 +20,7 @@ class ProductList with ChangeNotifier {
 
   Future<void> loadProducts() async {
     _items.clear();
-    final response = await http.get(Uri.parse(_url));
+    final response = await http.get(Uri.parse('$_baseUrl.json'));
 
     if (response.body == 'null') return;
 
@@ -43,7 +43,7 @@ class ProductList with ChangeNotifier {
   }
 
   Future<void> saveProduct(Map<String, Object> formData) {
-    bool hasId = formData['Id'] != null;
+    bool hasId = formData['id'] != null;
 
     final newProduct = Product(
       id: hasId ? formData['id'] as String : Random().nextDouble().toString(),
@@ -62,7 +62,7 @@ class ProductList with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     try {
-      final response = await http.post(Uri.parse(_url),
+      final response = await http.post(Uri.parse('$_baseUrl.json'),
           body: jsonEncode({
             "name": product.name,
             "description": product.description,
@@ -86,20 +86,40 @@ class ProductList with ChangeNotifier {
     } catch (e) {}
   }
 
-  Future<void> updateProduct(Product product) {
+  Future<void> updateProduct(Product product) async {
     int index = _items.indexWhere((produto) => produto.id == product.id);
 
     if (index >= 0) {
+      final response =
+          await http.patch(Uri.parse('$_baseUrl/${product.id}.json'),
+              body: jsonEncode({
+                "name": product.name,
+                "description": product.description,
+                "price": product.price,
+                "imageUrl": product.imageUrl,
+              }));
+
       _items[index] = product;
       notifyListeners();
     }
-
-    return Future.value();
   }
 
-  void removeItem(String id) {
-    _items.removeWhere((product) => product.id == id);
-    notifyListeners();
+  Future<void> removeProduct(Product product) async {
+    int index = _items.indexWhere((p) => p.id == product.id);
+
+    if (index >= 0) {
+      final product = _items[index];
+      _items.remove(product);
+      notifyListeners();
+
+      final response =
+          await http.delete(Uri.parse('$_baseUrl/${product.id}.json'));
+
+      if (response.statusCode >= 400) {
+        _items.insert(index, product);
+        notifyListeners();
+      }
+    }
   }
 }
 
